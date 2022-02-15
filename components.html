@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>FishEye - Composants</title>
+        <link href="./public/css/style.css" rel="stylesheet" type="text/css" />
+    </head>
+    <body style="display: flex; flex-direction: column; padding: 2rem">
+        <div class="form-group-container"></div>
+        <div
+            style="
+                padding: 2.5rem 0;
+                display: flex;
+                align-items: center;
+                gap: 2.5rem;
+            "
+        >
+            <button class="like-btn">
+                <span class="like-btn__counter">12</span>
+                <span class="like-btn__icon"></span>
+            </button>
+
+            <div class="sort-btn">
+                <select class="sort-btn__select">
+                    <option value="popularity">Popularité</option>
+                    <option value="date">Date</option>
+                    <option value="title">Titre</option>
+                </select>
+                <span class="sort-btn__focus"></span>
+            </div>
+
+            <button class="btn">Contactez-moi</button>
+        </div>
+        <div class="logo">
+            <img
+                class="logo__img"
+                alt="Logo FishEye"
+                src="./assets/images/logo.png"
+            />
+        </div>
+        <script type="module" src="./scripts/pages/components.js"></script>
+    </body>
+</html>

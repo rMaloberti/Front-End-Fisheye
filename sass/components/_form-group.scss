@@ -1,0 +1,19 @@
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+
+    padding: 0.5rem 0;
+
+    font-family: "DM-Sans", sans-serif;
+
+    &__label {
+        font-size: 1.25rem;
+    }
+
+    &__textfield {
+        font-size: 1.25rem;
+        max-width: 30rem;
+        padding: 0.5rem 0.25rem;
+    }
+}
