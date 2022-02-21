@@ -4,6 +4,9 @@ import { sortBtnFactory } from "../factories/sortBtnFactory.js";
 import { btnFactory } from "../factories/btnFactory.js";
 import { logoFactory } from "../factories/logoFactory.js";
 import { avatarFactory } from "../factories/avatarFactory.js";
+import { userNameFactory } from "../factories/userNameFactory.js";
+import { userLocationFactory } from "../factories/userLocationFactory.js";
+import { userTaglineFactory } from "../factories/userTaglineFactory.js";
 
 function displayComponents() {
     const textfieldContainer = document.querySelector(".form-group-container");
@@ -28,14 +31,22 @@ function displayComponents() {
     const cardsContainer = document.querySelector(".cards-container");
     const cardComponentsContainer = document.createElement("div");
     cardComponentsContainer.style =
-        "width: 33%; display: flex; flex-direction: column;";
+        "width: 30%; display: flex; flex-direction: column; gap: 0.5rem;";
 
     const avatar = avatarFactory(
         "../../assets/photographers/MarcelNikolic.jpg",
         "Marcel Nikolic"
     );
+    const userName = userNameFactory("Marcel Nikolic");
+    const userLocation = userLocationFactory("Berlin, Germany");
+    const userTagline = userTaglineFactory(
+        "Toujours à la recherche de LA photo"
+    );
 
     cardComponentsContainer.appendChild(avatar);
+    cardComponentsContainer.appendChild(userName);
+    cardComponentsContainer.appendChild(userLocation);
+    cardComponentsContainer.appendChild(userTagline);
 
     cardsContainer.appendChild(cardComponentsContainer);
 }
