@@ -1,54 +1,73 @@
-import { textfieldFactory } from "../factories/textfieldFactory.js";
-import { likeBtnFactory } from "../factories/likeBtnFactory.js";
-import { sortBtnFactory } from "../factories/sortBtnFactory.js";
-import { btnFactory } from "../factories/btnFactory.js";
-import { logoFactory } from "../factories/logoFactory.js";
-import { avatarFactory } from "../factories/avatarFactory.js";
-import { userNameFactory } from "../factories/userNameFactory.js";
-import { userLocationFactory } from "../factories/userLocationFactory.js";
-import { userTaglineFactory } from "../factories/userTaglineFactory.js";
+/* Import factories */
+import { LayoutsFactory } from "../factories/layoutsFactory.js";
+import { ComponentsFactory } from "../factories/componentsFactory.js";
 
 function displayComponents() {
-    const textfieldContainer = document.querySelector(".form-group-container");
-    const textfield = textfieldFactory("Prénom", false);
+    /* Facotries initialisation */
+    const layoutsFactory = new LayoutsFactory();
+    const componentsFactory = new ComponentsFactory();
 
+    /* Create the components layout and add it to the body */
+    const componentsContainer = layoutsFactory.getComponentsContainerDOM();
+    document.querySelector("body").prepend(componentsContainer);
+
+    /* Get the textfield container */
+    const textfieldContainer = document.querySelector(".components-container__textfield");
+
+    /* Create the textfield component and add it to its container */
+    const textfield = componentsFactory.getTextfieldDOM("Prénom", false);
     textfieldContainer.appendChild(textfield);
 
-    const buttonsContainer = document.querySelector(".buttons-container");
-    const likeBtn = likeBtnFactory(12, true);
-    const sortBtn = sortBtnFactory();
-    const btn = btnFactory("Contactez-moi");
+    /* Get the buttons container */
+    const buttonsContainer = document.querySelector(".components-container__buttons");
 
+    /* Create the like button component and add it to its container */
+    const likeBtn = componentsFactory.getLikeBtnDOM(12, true);
     buttonsContainer.appendChild(likeBtn);
+
+    /* Create the sort button component and add it to its container */
+    const sortBtn = componentsFactory.getSortBtnDOM();
     buttonsContainer.appendChild(sortBtn);
-    buttonsContainer.appendChild(btn);
 
-    const logoContainer = document.querySelector(".logo-container");
-    const logo = logoFactory();
+    /* Create the main button component and add it to its container */
+    const mainBtn = componentsFactory.getMainBtnDOM("Contactez-moi");
+    buttonsContainer.appendChild(mainBtn);
 
+    /* Get the logo container */
+    const logoContainer = document.querySelector(".components-container__logo");
+
+    /* Create the logo component and add it to its container */
+    const logo = componentsFactory.getLogoDOM();
     logoContainer.appendChild(logo);
 
-    const cardsContainer = document.querySelector(".cards-container");
-    const cardComponentsContainer = document.createElement("div");
-    cardComponentsContainer.style =
-        "width: 30%; display: flex; flex-direction: column; gap: 0.5rem;";
+    /* Get the card components container */
+    const cardComponentsContainer = document.querySelector(".card-components");
 
-    const avatar = avatarFactory(
-        "../../assets/photographers/MarcelNikolic.jpg",
-        "Marcel Nikolic"
-    );
-    const userName = userNameFactory("Marcel Nikolic");
-    const userLocation = userLocationFactory("Berlin, Germany");
-    const userTagline = userTaglineFactory(
-        "Toujours à la recherche de LA photo"
-    );
-
+    /* Create the avatar component and add it to its container */
+    const avatar = componentsFactory.getAvatarDOM("../../assets/photographers/MarcelNikolic.jpg", "Marcel Nikolic");
     cardComponentsContainer.appendChild(avatar);
+
+    /* Create the user name component and add it to its container */
+    const userName = componentsFactory.getUserNameDOM("Marcel Nikolic");
     cardComponentsContainer.appendChild(userName);
+
+    /* Create the user location component and add it to its container */
+    const userLocation = componentsFactory.getUserLocationDOM("Berlin, Germany");
     cardComponentsContainer.appendChild(userLocation);
+
+    /* Create the user tagline component and add it to its container */
+    const userTagline = componentsFactory.getUserTaglineDOM("Toujours à la recherche de LA photo");
     cardComponentsContainer.appendChild(userTagline);
 
+    /* Get the cards container */
+    const cardsContainer = document.querySelector(".components-container__cards");
+
+    /* Add the card components container to the cards container */
     cardsContainer.appendChild(cardComponentsContainer);
+
+    /* Create the media component and add it to its container */
+    const media = componentsFactory.getMediaDOM("../../assets/images/Marcel/Architecture_Corner_Room.jpg", "Corner Building and Blue Sky", 12, true);
+    cardsContainer.appendChild(media);
 }
 
 function init() {
