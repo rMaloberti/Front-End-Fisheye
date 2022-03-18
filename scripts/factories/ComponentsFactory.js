@@ -71,6 +71,13 @@ export class ComponentsFactory {
     };
 
     getSortBtnDOM = () => {
+        const sortContainer = document.createElement("div");
+        sortContainer.classList.add("sort-container");
+
+        const sortLabel = document.createElement("label");
+        sortLabel.classList.add("sort-container__label");
+        sortLabel.textContent = "Trier par";
+
         const sortBtn = document.createElement("ul");
         sortBtn.classList.add("sort-btn");
 
@@ -152,7 +159,10 @@ export class ComponentsFactory {
             selectedContainer.addEventListener("click", openDropdown);
         }
 
-        return sortBtn;
+        sortContainer.appendChild(sortLabel);
+        sortContainer.appendChild(sortBtn);
+
+        return sortContainer;
     };
 
     getMainBtnDOM = (btnText) => {
@@ -164,7 +174,7 @@ export class ComponentsFactory {
     };
 
     getLogoDOM = () => {
-        const logo = document.createElement("div");
+        const logo = document.createElement("button");
         logo.classList.add("logo");
 
         const image = document.createElement("img");
@@ -274,7 +284,7 @@ export class ComponentsFactory {
     getUserCardDOM = (data) => {
         const { portrait, name, city, country, tagline, price, id } = data;
 
-        const userCard = document.createElement("article");
+        const userCard = document.createElement("button");
         userCard.classList.add("user-card");
 
         const avatar = this.getAvatarDOM({ portrait, name }, true);
@@ -300,20 +310,22 @@ export class ComponentsFactory {
         return userCard;
     };
 
-    getPhotographerHeaderDOM = (userImage, userName, userLocation, userTagline, btnText) => {
+    getPhotographerHeaderDOM = (data, btnText) => {
+        const { portrait, name, city, country, tagline } = data;
+
         const header = document.createElement("div");
         header.classList.add("photographer-header");
 
         const infos = document.createElement("div");
         infos.classList.add("photographer-header__infos");
 
-        const name = this.getUserNameDOM(userName, false);
-        const location = this.getUserLocationDOM(userLocation, false);
-        const tagline = this.getUserTaglineDOM(userTagline, false);
+        const userName = this.getUserNameDOM({ name }, false);
+        const userLocation = this.getUserLocationDOM({ city, country }, false);
+        const userTagline = this.getUserTaglineDOM({ tagline }, false);
 
-        infos.appendChild(name);
-        infos.appendChild(location);
-        infos.appendChild(tagline);
+        infos.appendChild(userName);
+        infos.appendChild(userLocation);
+        infos.appendChild(userTagline);
 
         const btnContainer = document.createElement("div");
         btnContainer.classList.add("photographer-header__btn-container");
@@ -325,7 +337,7 @@ export class ComponentsFactory {
         const avatarContainer = document.createElement("div");
         avatarContainer.classList.add("photographer-header__avatar-container");
 
-        const avatar = this.getAvatarDOM(userImage, userName, true);
+        const avatar = this.getAvatarDOM({ portrait, name }, true);
 
         avatarContainer.appendChild(avatar);
 
