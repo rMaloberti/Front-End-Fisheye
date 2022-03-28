@@ -92,10 +92,23 @@ export class LayoutsFactory {
 
         const photographerName = photographer.name;
 
-        photographer.medias.forEach((media) => {
+        photographer.medias.forEach((media, index) => {
             const mediaDOM = media.hasOwnProperty("image")
                 ? componentsFactory.getImageDOM(media, photographerName, false)
                 : componentsFactory.getVideoDOM(media, photographerName, false);
+
+            const mediaButton = mediaDOM.querySelector("button");
+
+            mediaButton.addEventListener("click", () => {
+                const lightbox = componentsFactory.getLightboxDOM({ medias: photographer.medias, index, photographerName });
+                main.appendChild(lightbox);
+
+                const closeLightBox = document.getElementById("close-lightbox");
+
+                closeLightBox.addEventListener("click", () => {
+                    main.removeChild(document.querySelector(".lightbox"));
+                });
+            });
 
             medias.appendChild(mediaDOM);
         });
@@ -103,8 +116,11 @@ export class LayoutsFactory {
         mediasSection.appendChild(sortMedias);
         mediasSection.appendChild(medias);
 
+        const likes = componentsFactory.getPhotographerLikesDOM(photographer);
+
         main.appendChild(banner);
         main.appendChild(mediasSection);
+        main.appendChild(likes);
 
         return main;
     };
