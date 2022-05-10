@@ -38,9 +38,13 @@ export class ComponentsFactory {
         return textfield;
     };
 
-    getLikeBtnDOM = (likes, isLiked) => {
+    getLikeBtnDOM = (data) => {
+        const { likes, id, isLiked } = data;
+
         const button = document.createElement("button");
         button.classList.add("like-btn");
+        button.setAttribute("id", `${id}`);
+        button.setAttribute("type", "button");
 
         const counter = document.createElement("p");
         counter.classList.add("like-btn__counter");
@@ -48,50 +52,64 @@ export class ComponentsFactory {
 
         const icon = document.createElement("i");
         icon.classList.add("like-btn__icon");
+        icon.setAttribute("aria-label", "likes");
 
         if (isLiked) {
             icon.classList.add("like-btn__icon--liked");
-            icon.addEventListener("click", unlike);
+            button.addEventListener("click", unlike);
         } else {
-            icon.addEventListener("click", like);
+            button.addEventListener("click", like);
         }
 
         button.appendChild(counter);
         button.appendChild(icon);
 
         function unlike() {
-            icon.removeEventListener("click", unlike);
+            button.removeEventListener("click", unlike);
 
             icon.classList.remove("like-btn__icon--liked");
 
-            icon.addEventListener("click", like);
+            button.addEventListener("click", like);
         }
 
         function like() {
-            icon.removeEventListener("click", like);
+            button.removeEventListener("click", like);
 
             icon.classList.add("like-btn__icon--liked");
 
-            icon.addEventListener("click", unlike);
+            button.addEventListener("click", unlike);
         }
 
         return button;
     };
 
-    getSortBtnDOM = () => {
+    getSortBtnDOM = (photographerId) => {
         const sortContainer = document.createElement("div");
         sortContainer.classList.add("sort-container");
 
         const sortLabel = document.createElement("label");
+        sortLabel.setAttribute("id", "sort-label");
         sortLabel.classList.add("sort-container__label");
         sortLabel.textContent = "Trier par";
 
         const sortBtn = document.createElement("ul");
         sortBtn.classList.add("sort-btn");
+        sortBtn.setAttribute("role", "button");
+        sortBtn.setAttribute("aria-haspopup", "listbox");
+        sortBtn.setAttribute("aria-expanded", "false");
 
         const selectedContainer = document.createElement("li");
+        selectedContainer.setAttribute("id", "selected");
+        selectedContainer.setAttribute("type", "button");
+        selectedContainer.setAttribute("role", "listbox");
+        selectedContainer.setAttribute("aria-activedescendant", "selected");
+        selectedContainer.setAttribute("aria-selected", "true");
+        selectedContainer.setAttribute("aria-labelledby", "sort-label");
         const selected = document.createElement("button");
-        selected.textContent = "Popularité";
+        selected.textContent =
+            window.location.search.includes("sort=") && window.location.search.split("&")[1].split("=")[1] !== "Popularit%C3%A9"
+                ? window.location.search.split("&")[1].split("=")[1]
+                : "Popularité";
         selectedContainer.classList.add("sort-btn__selected");
 
         selectedContainer.appendChild(selected);
@@ -104,16 +122,28 @@ export class ComponentsFactory {
         selectedContainer.addEventListener("click", openDropdown);
 
         const option1Container = document.createElement("li");
+        option1Container.setAttribute("id", "option1");
+        option1Container.setAttribute("type", "button");
+        option1Container.setAttribute("role", "listbox");
+        option1Container.setAttribute("aria-activedescendant", "option1");
+        option1Container.setAttribute("aria-selected", "false");
+        option1Container.setAttribute("aria-labelledby", "sort-label");
         const option1 = document.createElement("button");
-        option1.textContent = "Date";
+        option1.textContent = selected.textContent === "Date" ? "Popularité" : "Date";
         option1Container.classList.add("sort-btn__option");
         option1Container.classList.add("sort-btn__option--hidden");
 
         option1Container.appendChild(option1);
 
         const option2Container = document.createElement("li");
+        option2Container.setAttribute("id", "option2");
+        option2Container.setAttribute("type", "button");
+        option2Container.setAttribute("role", "listbox");
+        option2Container.setAttribute("aria-activedescendant", "option2");
+        option2Container.setAttribute("aria-selected", "false");
+        option2Container.setAttribute("aria-labelledby", "sort-label");
         const option2 = document.createElement("button");
-        option2.textContent = "Titre";
+        option2.textContent = selected.textContent === "Titre" ? "Popularité" : "Titre";
         option2Container.classList.add("sort-btn__option");
         option2Container.classList.add("sort-btn__option--hidden");
 
@@ -128,6 +158,8 @@ export class ComponentsFactory {
         function openDropdown() {
             selectedContainer.removeEventListener("click", openDropdown);
 
+            sortBtn.setAttribute("aria-expanded", "true");
+
             icon.classList.add("sort-btn__icon--alt");
             option1Container.classList.remove("sort-btn__option--hidden");
             option2Container.classList.remove("sort-btn__option--hidden");
@@ -141,6 +173,8 @@ export class ComponentsFactory {
             options.forEach((option) => {
                 option.removeEventListener("click", closeDropdown);
             });
+
+            sortBtn.setAttribute("aria-expanded", "false");
 
             let filterChoosen = e.target.textContent;
 
@@ -164,6 +198,8 @@ export class ComponentsFactory {
                 selected.appendChild(icon);
             }
 
+            window.location.search = `id=${photographerId}&sort=${filterChoosen}`;
+
             icon.classList.remove("sort-btn__icon--alt");
             option1Container.classList.add("sort-btn__option--hidden");
             option2Container.classList.add("sort-btn__option--hidden");
@@ -179,6 +215,7 @@ export class ComponentsFactory {
 
     getMainBtnDOM = (btnText) => {
         const btn = document.createElement("button");
+        btn.setAttribute("type", "button");
         btn.textContent = btnText;
         btn.classList.add("btn");
 
@@ -196,11 +233,12 @@ export class ComponentsFactory {
 
     getLogoDOM = () => {
         const logo = document.createElement("button");
+        logo.setAttribute("type", "button");
         logo.classList.add("logo");
 
         const image = document.createElement("img");
         image.classList.add("logo__img");
-        image.setAttribute("alt", "Logo FishEye");
+        image.setAttribute("alt", "Fisheye Home page");
         image.setAttribute("src", "./assets/images/logo.png");
 
         logo.appendChild(image);
@@ -220,7 +258,13 @@ export class ComponentsFactory {
 
         const image = document.createElement("img");
         image.classList.add("avatar__img");
-        image.setAttribute("alt", `Avatar de ${name}`);
+
+        if (isInCard) {
+            image.setAttribute("alt", "");
+        } else {
+            image.setAttribute("alt", `Avatar de ${name}`);
+        }
+
         image.setAttribute("src", `../../assets/photographers/${portrait}`);
 
         avatar.appendChild(image);
@@ -235,13 +279,17 @@ export class ComponentsFactory {
     getUserNameDOM = (data, isInCard) => {
         const { name } = data;
 
-        const userName = document.createElement("h2");
-        userName.classList.add("user-name");
-        userName.textContent = name;
+        let userName;
 
         if (isInCard) {
+            userName = document.createElement("h2");
             userName.classList.add("user-name--card");
+        } else {
+            userName = document.createElement("h1");
         }
+
+        userName.classList.add("user-name");
+        userName.textContent = name;
 
         return userName;
     };
@@ -249,13 +297,17 @@ export class ComponentsFactory {
     getUserLocationDOM = (data, isInCard) => {
         const { city, country } = data;
 
-        const location = document.createElement("p");
-        location.classList.add("user-location");
-        location.textContent = `${city}, ${country}`;
+        let location;
 
         if (isInCard) {
+            location = document.createElement("p");
             location.classList.add("user-location--card");
+        } else {
+            location = document.createElement("h2");
         }
+
+        location.classList.add("user-location");
+        location.textContent = `${city}, ${country}`;
 
         return location;
     };
@@ -274,17 +326,19 @@ export class ComponentsFactory {
         return userTagline;
     };
 
-    getImageDOM = (data, photographerName, isLiked) => {
-        const { title, image, likes } = data;
+    getImageDOM = (data, photographerName) => {
+        const { title, image, likes, id, isLiked } = data;
 
         const mediaContainer = document.createElement("figure");
         mediaContainer.classList.add("media-container");
 
         const mediaButton = document.createElement("button");
+        mediaButton.setAttribute("type", "button");
+        mediaButton.setAttribute("aria-haspopup", "dialog");
 
         const media = document.createElement("img");
         media.classList.add("media-container__media");
-        media.setAttribute("alt", title);
+        media.setAttribute("alt", `image : ${title}`);
         media.setAttribute("src", `../../assets/images/${photographerName.split(" ")[0]}/${image}`);
 
         mediaButton.appendChild(media);
@@ -298,7 +352,7 @@ export class ComponentsFactory {
 
         figCaption.appendChild(mediaTitle);
 
-        const likeBtn = this.getLikeBtnDOM(likes, isLiked);
+        const likeBtn = this.getLikeBtnDOM({ likes, id, isLiked });
 
         figCaption.appendChild(likeBtn);
 
@@ -307,13 +361,15 @@ export class ComponentsFactory {
         return mediaContainer;
     };
 
-    getVideoDOM = (data, photographerName, isLiked) => {
-        const { title, video, likes } = data;
+    getVideoDOM = (data, photographerName) => {
+        const { title, video, likes, id, isLiked } = data;
 
         const mediaContainer = document.createElement("figure");
         mediaContainer.classList.add("media-container");
 
         const mediaButton = document.createElement("button");
+        mediaButton.setAttribute("type", "button");
+        mediaButton.setAttribute("aria-haspopup", "dialog");
 
         const media = document.createElement("video");
         media.classList.add("media-container__media");
@@ -335,7 +391,7 @@ export class ComponentsFactory {
 
         figCaption.appendChild(mediaTitle);
 
-        const likeBtn = this.getLikeBtnDOM(likes, isLiked);
+        const likeBtn = this.getLikeBtnDOM({ likes, id, isLiked });
 
         figCaption.appendChild(likeBtn);
 
@@ -348,6 +404,7 @@ export class ComponentsFactory {
         const { portrait, name, city, country, tagline, price, id } = data;
 
         const userCard = document.createElement("button");
+        userCard.setAttribute("type", "button");
         userCard.classList.add("user-card");
 
         const avatar = this.getAvatarDOM({ portrait, name }, true);
@@ -395,6 +452,7 @@ export class ComponentsFactory {
 
         const button = this.getMainBtnDOM(btnText);
         button.setAttribute("id", "contact-btn");
+        button.setAttribute("aria-haspopup", "dialog");
 
         btnContainer.appendChild(button);
 
@@ -430,6 +488,7 @@ export class ComponentsFactory {
 
         const icon = document.createElement("i");
         icon.classList.add("photographer-likes__counter__icon");
+        icon.setAttribute("aria-label", "likes");
 
         counter.appendChild(icon);
 
@@ -450,9 +509,14 @@ export class ComponentsFactory {
 
         const lightbox = document.createElement("dialog");
         lightbox.classList.add("lightbox");
+        lightbox.setAttribute("aria-label", "image closeup view");
+        lightbox.setAttribute("aria-hidden", "true");
 
         const previousBtn = document.createElement("button");
+        previousBtn.setAttribute("type", "button");
+        previousBtn.setAttribute("aria-label", "Previous image");
         previousBtn.classList.add("lightbox__previous");
+        previousBtn.setAttribute("tabindex", "3");
 
         const previousIcon = document.createElement("i");
         previousIcon.classList.add("lightbox__previous__icon");
@@ -465,6 +529,9 @@ export class ComponentsFactory {
         const closeBtn = document.createElement("button");
         closeBtn.classList.add("lightbox__figure__close");
         closeBtn.setAttribute("id", "close-lightbox");
+        closeBtn.setAttribute("type", "button");
+        closeBtn.setAttribute("aria-label", "Close dialog");
+        closeBtn.setAttribute("tabindex", "1");
 
         const closeIcon = document.createElement("i");
         closeIcon.classList.add("lightbox__figure__close__icon");
@@ -493,6 +560,8 @@ export class ComponentsFactory {
             media.appendChild(mediaSource);
         }
 
+        media.removeAttribute("aria-haspopup");
+
         const caption = document.createElement("figcaption");
         caption.classList.add("lightbox__figure__caption");
         caption.textContent = medias[index].title;
@@ -502,7 +571,10 @@ export class ComponentsFactory {
         figure.appendChild(caption);
 
         const nextBtn = document.createElement("button");
+        nextBtn.setAttribute("type", "button");
+        nextBtn.setAttribute("aria-label", "Next image");
         nextBtn.classList.add("lightbox__next");
+        nextBtn.setAttribute("tabindex", "2");
 
         const nextIcon = document.createElement("i");
         nextIcon.classList.add("lightbox__next__icon");

@@ -94,6 +94,14 @@ export class LayoutsFactory {
             closeContactForm.addEventListener("click", () => {
                 main.removeChild(contactForm);
             });
+
+            document.addEventListener("keydown", (e) => {
+                const key = e.key;
+
+                if (key === "Esc" || key === "Escape") {
+                    main.removeChild(contactForm);
+                }
+            });
         });
 
         const mediasSection = document.createElement("section");
@@ -102,12 +110,35 @@ export class LayoutsFactory {
         const sortMedias = document.createElement("div");
         sortMedias.classList.add("medias-section__sort");
 
-        const sortBtn = componentsFactory.getSortBtnDOM();
+        const sortBtn = componentsFactory.getSortBtnDOM(photographer.id);
 
         sortMedias.appendChild(sortBtn);
 
         const medias = document.createElement("div");
         medias.classList.add("medias-section__medias");
+
+        if (window.location.search.includes("sort=")) {
+            const sortBy = window.location.search.split("&")[1].split("=")[1];
+
+            switch (sortBy) {
+                case "Popularit%C3%A9":
+                    photographer.medias.sort((a, b) => b.likes - a.likes);
+                    break;
+                case "Date":
+                    photographer.medias.sort((a, b) => {
+                        const dateA = new Date(a.date);
+                        const dateB = new Date(b.date);
+
+                        return dateB - dateA;
+                    });
+                    break;
+                case "Titre":
+                    photographer.medias.sort((a, b) => a.title.localeCompare(b.title));
+                    break;
+                default:
+                    break;
+            }
+        }
 
         photographer.medias.forEach((media, index) => {
             const mediaDOM = media.hasOwnProperty("image")
@@ -118,12 +149,34 @@ export class LayoutsFactory {
 
             mediaButton.addEventListener("click", () => {
                 const lightbox = componentsFactory.getLightboxDOM({ medias: photographer.medias, index, photographerName });
-                main.appendChild(lightbox);
+                document.body.appendChild(lightbox);
+
+                lightbox.setAttribute("aria-hidden", "false");
+                lightbox.setAttribute("open", "true");
+                document.body.classList.add("body-modal");
+                document.body.setAttribute("aria-hidden", "true");
+                document.getElementById("close-lightbox").focus();
 
                 const closeLightBoxBtn = document.getElementById("close-lightbox");
 
                 closeLightBoxBtn.addEventListener("click", () => {
-                    main.removeChild(lightbox);
+                    document.body.removeChild(lightbox);
+                    document.body.setAttribute("aria-hidden", "false");
+                    lightbox.setAttribute("aria-hidden", "true");
+                    document.body.classList.remove("body-modal");
+                    mediaButton.focus();
+                });
+
+                document.addEventListener("keydown", (e) => {
+                    const key = e.key;
+
+                    if (key === "Esc" || key === "Escape") {
+                        document.body.removeChild(lightbox);
+                        document.body.setAttribute("aria-hidden", "false");
+                        lightbox.setAttribute("aria-hidden", "true");
+                        document.body.classList.remove("body-modal");
+                        mediaButton.focus();
+                    }
                 });
             });
 
